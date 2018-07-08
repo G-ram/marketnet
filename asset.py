@@ -26,6 +26,9 @@ class Position(object):
 		self.quantity = quantity
 		self.price = price
 
+	def __str__(self):
+		return "%s=> $%f, quantity: %d" % (self.asset.symbol, self.price, self.quantity)
+
 class Transaction(object):
 	def __init__(self, asset, quantity, buy_price, sell_price, buyer, sellers):
 		self.asset = asset
@@ -42,6 +45,11 @@ class Transaction(object):
 	def percent_gain_loss(self):
 		if self.sell_price is None: return 0
 		return (self.sell_price / self.buy_price)
+
+	def __str__(self):
+		return "%s=> bought @ $%f sold @ $%f, quantity: %d" % (
+			self.asset.symbol, self.buy_price, (self.sell_price if
+				self.sell_price is not None else 0.), self.quantity)
 
 class Market(object):
 	def __init__(self):

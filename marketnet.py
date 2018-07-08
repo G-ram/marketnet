@@ -13,7 +13,7 @@ def main(args):
 
 	market = asset.Market()
 	assets = [asset.gen_asset() for _ in xrange(config['assets'])]
-	actors = [actor.Actor() for _ in xrange(config['actors'])]
+	actors = [actor.Actor(i) for i in xrange(config['actors'])]
 	for a in assets:
 		movement_mean = random.uniform(-1.0, 1.0)
 		movement_std_dev = random.uniform(0.1, 2.0)
@@ -22,7 +22,7 @@ def main(args):
 				buyer, seller = random.sample(range(config['actors']), 2)
 				change = random.normalvariate(movement_mean, movement_std_dev)
 				settle_price = (1 + change / 100.) * a.price
-				if a.symbol not in actors[seller].positions:
+				if a.symbol not in actors[seller].positions or actors[seller].positions[a.symbol].quantity == 0:
 					quantity = random.randint(0, a.outstanding)
 					a.outstanding -= quantity
 					actors[buyer].buy(a, quantity, settle_price, [market])
@@ -38,6 +38,9 @@ def main(args):
 					actors[buyer].buy(a, quantity, settle_price, [actors[seller], market])
 					actors[seller].sell(a, quantity_from_seller, settle_price, actors[buyer])
 				a.price = settle_price
+		print a
+
+	for a in actors:
 		print a
 
 if __name__ == '__main__':
